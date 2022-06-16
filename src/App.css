@@ -1,0 +1,46 @@
+body{
+  height: 100vh;
+}
+#root, .App{
+  height: 100%;
+}
+main{
+  display: flex;
+  justify-content: center;
+  background-color: lightgray;
+  height: 100%;
+}
+.wrapperContent{
+  margin-top: 100px;
+  height: 100%;
+  width: 80%;
+}
+#content{
+  width: 100%;
+  height: 700px;
+  background-color: white;
+}
+.wrapperMenu{
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 20px;
+}
+#inputPath, #inputNewValue{
+  margin: 5px;
+  margin-left: 0;
+}
+
+#btnApply{
+  flex-basis: 10%;
+  height: 20px;
+  align-self: flex-end;
+  margin: 5px;
+}
+.wrapperInputPath, .wrapperInputNewValue{
+  display: flex;
+  flex-direction: column;
+  flex-basis: 40%;
+}
+label{
+  visibility: false;
+}
