@@ -1,17 +1,15 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import shortid from "shortid";
 
-export const Content = () => {
-  const content = useSelector((state) => state);
-  console.log(content);
+export const Content = ({ content }) => {
   return (
-    <div className="wrapperContent">
-      <div id="content">
-        {content?.map((item) => {
-          if (item.type === "panel") {
+    <div>
+      {content?.map((item) => {
+        switch (item.type) {
+          case "panel":
             return (
               <div
-                key="panel1"
+                key={"panel" + shortid.generate()}
                 style={{
                   width: item.props.width,
                   height: item.props.height,
@@ -20,26 +18,13 @@ export const Content = () => {
                   border: "3px solid red",
                 }}
               >
-                {content[0].content &&
-                  content[0].content.map((item) => {
-                    return (
-                      <span
-                        key="span2"
-                        style={{
-                          visibility:
-                            item.props.visible === false ? "hidden" : "visible",
-                        }}
-                      >
-                        {item.props.caption}
-                      </span>
-                    );
-                  })}
+                {item.content && <Content content={item.content} />}
               </div>
             );
-          } else if (item.type === "label") {
+          case "label":
             return (
               <span
-                key="span1"
+                key={"label" + shortid.generate()}
                 style={{
                   visibility:
                     item.props.visible === false ? "hidden" : "visible",
@@ -48,10 +33,10 @@ export const Content = () => {
                 {item.props.caption}
               </span>
             );
-          } else if (item.type === "button") {
+          case "button":
             return (
               <button
-                key="button1"
+                key={"button" + shortid.generate()}
                 style={{
                   width: item.props.width,
                   height: item.props.height,
@@ -62,9 +47,8 @@ export const Content = () => {
                 ок
               </button>
             );
-          }
-        })}
-      </div>
+        }
+      })}
     </div>
   );
 };

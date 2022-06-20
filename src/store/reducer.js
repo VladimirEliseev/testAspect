@@ -13,26 +13,43 @@ function updateContent(state, action) {
   const { stateInputValue, stateInputPath } = action.content;
   if (stateInputValue === "" || stateInputPath === "") {
     alert("Введите значения в оба поля");
+    return state;
   } else {
     const prop = stateInputPath.slice(stateInputPath.lastIndexOf(".") + 1);
-    const index = stateInputPath.slice(
-      stateInputPath.indexOf("[") + 1,
-      stateInputPath.indexOf("]")
-    );
-    console.log(index);
-    const newState = [...state];
-    if (stateInputValue[0] === "{") {
-      let string = stateInputValue;
-      const object = new Function("return (" + string + ")")();
-      newState[index].content = [];
-      newState[index].content.push(object);
-    } else if (!isNaN(Number(stateInputValue))) {
-      newState[index].props[prop] = Number(stateInputValue);
-    } else if (stateInputValue === "false" || stateInputValue === "true") {
-      newState[index].props[prop] = JSON.parse(stateInputValue);
-    } else {
-      newState[index].props[prop] = stateInputValue;
+    let results = [],
+      re = /\[([^\]]+)\]/g,
+      text;
+    while ((text = re.exec(stateInputPath))) {
+      results.push(+text[1]);
     }
-    return newState;
+    let index = 0;
+    const newState = recurcion(state, index, results, stateInputValue, prop);
+    return [...state];
   }
+}
+
+function recurcion(array, index, results, stateInputValue, prop) {
+  const content = array.content ? array.content : array;
+  return content.map((value, i) => {
+    if (index === results.length - 1 && i === results[index]) {
+      if (stateInputValue[0] === "{") {
+        const object = new Function("return (" + stateInputValue + ")")();
+        if (!Array.isArray(value.content)) value.content = [];
+        value.content.push(object);
+      } else if (!isNaN(Number(stateInputValue))) {
+        value.props[prop] = Number(stateInputValue);
+      } else if (stateInputValue === "false" || stateInputValue === "true") {
+        value.props[prop] = JSON.parse(stateInputValue);
+      } else {
+        value.props[prop] = stateInputValue;
+      }
+      return { ...value };
+    } else if (index === results.length - 1 && i !== results[index]) {
+      return { ...value };
+    } else if (index < results.length - 1 && value.type === "panel") {
+      index++;
+      const val = recurcion(value, index, results, stateInputValue, prop);
+      return { ...val[0] };
+    }
+  });
 }
